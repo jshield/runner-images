@@ -1,12 +1,14 @@
 $ErrorActionPreference = 'Stop'
 
 enum ImageType {
-    Windows2019   = 1
-    Windows2022   = 2
-    Ubuntu2004    = 3
-    Ubuntu2204    = 4
-    Ubuntu2404    = 5
-    UbuntuMinimal = 6
+    Windows2019       = 1
+    Windows2022       = 2
+    Ubuntu2004        = 3
+    Ubuntu2204        = 4
+    Ubuntu2404        = 5
+    UbuntuMinimal     = 6
+    OracleXray        = 7
+    OracleArtifactory = 8
 }
 
 Function Get-PackerTemplatePath {
@@ -36,6 +38,12 @@ Function Get-PackerTemplatePath {
         }
         ([ImageType]::UbuntuMinimal) {
             $relativeTemplatePath = Join-Path (Join-Path "ubuntu" "templates") "ubuntu-minimal.pkr.hcl"
+        }
+        ([ImageType]::OracleXray) {
+            $relativeTemplatePath = Join-Path (Join-Path "oracle" "templates") "oracle-xray.pkr.hcl"
+        }
+        ([ImageType]::OracleArtifactory) {
+            $relativeTemplatePath = Join-Path (Join-Path "oracle" "templates") "oracle-artifactory.pkr.hcl"
         }
         default { throw "Unknown type of image" }
     }
@@ -242,7 +250,7 @@ Function GenerateResourcesAndImage {
         # Login to Azure subscription
         if ([string]::IsNullOrEmpty($AzureClientId)) {
             Write-Verbose "No AzureClientId was provided, will use interactive login."
-            az login --output none
+            #az login --output none
         }
         else {
             Write-Verbose "AzureClientId was provided, will use service principal login."
